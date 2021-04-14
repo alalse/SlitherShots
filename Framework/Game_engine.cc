@@ -1,13 +1,17 @@
 #include "Game_engine.h"
 #include "Game_state.h"
-#include "../States/Play_state.h"
+#include "../States/Menu_state.h"
+//#include "../States/Play_state.h"
 #include <string>
 
 using namespace sf;
 
 Game_engine::Game_engine(std::string const title, ContextSettings settings, 
                          int const width, int const height)
-: window{VideoMode(width, height), title, Style::Default, settings} {}
+: window{VideoMode(width, height), title, Style::Default, settings} 
+{
+    states.push(new Menu_state());
+}
 
 void Game_engine::cleanup()
 {

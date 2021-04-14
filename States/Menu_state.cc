@@ -7,8 +7,7 @@
 using namespace sf;
 
 Menu_state::Menu_state()
-: selected_menu{0}
-{
+: selected_menu{0} {
     background_image.loadFromFile("spelplan.png");
     font.loadFromFile("Roboto-Regular.ttf");
 
@@ -28,31 +27,24 @@ Menu_state::~Menu_state()
 
 void Menu_state::process_event(Game_engine* game, Event const& event)
 {
-    switch (event.type)
+    if (event.type == Event::KeyPressed)
     {
-    case Event::Closed:
-        break;
-
-    case Event::KeyPressed:
-        switch (event.key.code)
+        if (event.key.code == Keyboard::W || event.key.code == Keyboard::Up)
         {
-        case ::Keyboard::W:
-        case ::Keyboard::Up:
             if (selected_menu > 0 && selected_menu <= 3)
             {
                 --selected_menu;
             }
-            break;
-
-        case ::Keyboard::S:
-        case ::Keyboard::Down:
+        }
+        else if (event.key.code == Keyboard::S || event.key.code == Keyboard::Down)
+        {
             if (selected_menu >= 0 && selected_menu < 3)
             {
                 ++selected_menu;
             }
-            break;
-
-        case ::Keyboard::Return:
+        }
+        else if (event.key.code == Keyboard::Return)
+        {
             if (selected_menu == 0) 
             { 
                 game -> push_state(new Play_state()); 
@@ -69,15 +61,7 @@ void Menu_state::process_event(Game_engine* game, Event const& event)
             {
                 game -> running = false;
             }
-            
-            break;
-        
-        default:
-            break;
         }
-    
-    default:
-        break;
     }
 }
 
@@ -97,8 +81,7 @@ void Menu_state::draw(RenderWindow& window)
     game_title.setCharacterSize(60);
     game_title.setFont(font);
     FloatRect rect = game_title.getLocalBounds();
-    game_title.setOrigin(rect.left + rect.width / 2,
-                         rect.top  + rect.height / 2);
+    game_title.setOrigin(rect.left + (rect.width / 2), rect.top + (rect.height / 2));
     game_title.setPosition(Vector2f(window.getSize().x / 2, 100));
     window.draw(game_title);
 
@@ -117,8 +100,7 @@ void Menu_state::draw(RenderWindow& window)
 
         y_cord += 100;
         FloatRect tmp = t -> getLocalBounds();
-        t -> setOrigin(tmp.left + tmp.width / 2,
-                       tmp.top  + tmp.height / 2);
+        t -> setOrigin(tmp.left + (tmp.width / 2), tmp.top  + (tmp.height / 2));
         t -> setPosition(window.getSize().x / 2, y_cord);
         t -> setCharacterSize(35);
         window.draw(*t);

@@ -18,7 +18,6 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/Framework
     ${PROJECT_SOURCE_DIR}/Game_objects
     ${PROJECT_SOURCE_DIR}/States
-    ${PROJECT_SOURCE_DIR}/Food
 )
 
 file(GLOB all_SRCS
@@ -28,8 +27,6 @@ file(GLOB all_SRCS
     "${PROJECT_SOURCE_DIR}/Game_objects/*.cc"
     "${PROJECT_SOURCE_DIR}/States/*.h"
     "${PROJECT_SOURCE_DIR}/States/*.cc"
-    "${PROJECT_SOURCE_DIR}/Food/*.h"
-    "${PROJECT_SOURCE_DIR}/Food/*.cc"
 )
 
 add_executable(sfml ${MAIN} ${all_SRCS})

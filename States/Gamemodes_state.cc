@@ -1,5 +1,6 @@
 #include "Gamemodes_state.h"
 
+#include "../Framework/Settings_handler.h"
 #include <string>
 #include <map>
 #include <iostream>
@@ -11,89 +12,61 @@ Gamemodes_state::Gamemodes_state()
 {
     background_image.loadFromFile("spelplan.png");
     font.loadFromFile("Roboto-Regular.ttf");
-    settings = sh.load();
 }
 
-std::string Gamemodes_state::get_key(int index)
+std::string Gamemodes_state::get_setting_at_index(int index)
 {
-    int tmp{0};
-    std::string key;
-    for (std::pair<std::string, int> s : settings)
+    int counter{0};
+    std::string setting;
+    for (std::pair<std::string, int> s : Settings_handler::get_settings())
     {
-        key = s.first;
-        if (tmp == index)
+        setting = s.first;
+        if (counter == index)
         {
             break;
         }
         
-        ++tmp;
+        ++counter;
     }
 
-    return key;
-}
-
-int Gamemodes_state::change_value(std::string key)
-{
-    if (key == "Window width" || key == "Window height")
-    {
-        return 0;
-    }
-    else if (key == "Ball size" || key == "Ball velocity" || 
-             key == "Worm velocity" || key == "Extra length per food")
-    {
-        return 5;
-    }
-    else if (key == "Worm segments")
-    {
-        return 10;
-    }
-    else if (key == "Milliseconds between worm segment decay")
-    {
-        return 50;
-    }
-    else
-    {
-        return 1;
-    }
+    return setting;
 }
 
 void Gamemodes_state::process_event(Game_engine* game, Event const& event)
 {
     if (event.type == Event::KeyPressed)
     {
-        if ((event.key.code == Keyboard::W || event.key.code == Keyboard::Up) 
-             && selected_option > 0)
+        if (event.key.code == Keyboard::W || event.key.code == Keyboard::Up)
         {
-            --selected_option;
+            if (selected_option > 0)
+            {
+                --selected_option;
+            }
         }
-        else if ((event.key.code == Keyboard::S || event.key.code == Keyboard::Down) 
-                  && selected_option < settings.size() - 1)
+        else if (event.key.code == Keyboard::S || event.key.code == Keyboard::Down)
         {
-            ++selected_option;
+            if (selected_option < Settings_handler::get_settings().size() - 1)
+            {
+                ++selected_option;
+            }
         }
         else if (event.key.code == Keyboard::A || event.key.code == Keyboard::Left)
         {
-            std::string key{get_key(selected_option)};
-
-            if (settings.at(key) - change_value(key) >= 0)
-            {
-                settings.at(key) -= change_value(key);
-            }
+            std::string setting{get_setting_at_index(selected_option)};
+            Settings_handler::dec_setting(setting);
         }
         else if (event.key.code == Keyboard::D || event.key.code == Keyboard::Right)
         {
-            std::string key{get_key(selected_option)};
-            settings.at(key) += change_value(key);
+            std::string setting{get_setting_at_index(selected_option)};
+            Settings_handler::inc_setting(setting);
         }
         else if (event.key.code == Keyboard::Q)
         {
-            Settings_handler template_sh{"template_settings.txt"};
-            sh.write(template_sh.load());
-            settings = sh.load();
+            Settings_handler::load_default();
         }
         else if (event.key.code == Keyboard::Escape)
         {
-            sh.write(settings);
+            Settings_handler::write();
             game -> exit_current_state = true;
         }
     }
@@ -117,8 +90,7 @@ void Gamemodes_state::draw(RenderWindow& window)
     reset_btn.setString("Press 'Q' for default settings");
     reset_btn.setPosition(window.getSize().x - 310, window.getSize().y - 100);
     FloatRect rect = reset_btn.getLocalBounds();
-    reset_btn.setOrigin(rect.left,
-                     rect.top  + rect.height / 2);
+    reset_btn.setOrigin(rect.left, rect.top  + rect.height / 2);
     window.draw(reset_btn);
 
     Text exit_btn;
@@ -127,14 +99,13 @@ void Gamemodes_state::draw(RenderWindow& window)
     exit_btn.setString("Press 'Esc' to save and exit");
     exit_btn.setPosition(window.getSize().x - 300, window.getSize().y - 50);
     rect = exit_btn.getLocalBounds();
-    exit_btn.setOrigin(rect.left,
-                     rect.top  + rect.height / 2);
+    exit_btn.setOrigin(rect.left, rect.top  + rect.height / 2);
     window.draw(exit_btn);
 
     unsigned int tmp_x{75};
     unsigned int tmp_y{65};
     unsigned int index{0};
-    for (std::pair<std::string, int> s : settings)
+    for (std::pair<std::string, int> s : Settings_handler::get_settings())
     {
         if (index == selected_option)
         {
@@ -143,8 +114,7 @@ void Gamemodes_state::draw(RenderWindow& window)
             dot.setRadius(4);
             dot.setPosition(tmp_x - 15, tmp_y);
             rect = dot.getLocalBounds();
-            dot.setOrigin(rect.left + rect.width / 2,
-                          rect.top  + rect.height / 2);
+            dot.setOrigin(rect.left + rect.width / 2, rect.top  + rect.height / 2);
             window.draw(dot);
         }
 
@@ -154,8 +124,7 @@ void Gamemodes_state::draw(RenderWindow& window)
         option.setString(s.first + ": " + std::to_string(s.second));
         option.setPosition(tmp_x, tmp_y);
         rect = option.getLocalBounds();
-            option.setOrigin(rect.left,
-                             rect.top  + rect.height / 2);
+            option.setOrigin(rect.left, rect.top  + rect.height / 2);
         window.draw(option);
 
         ++index;
