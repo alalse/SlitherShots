@@ -1,0 +1,14 @@
+Ball size:45
+Ball velocity:15
+Extra length per food:10
+Food size:35
+Food spawnrate:1
+Special food boost duration:5
+Goals to win:5
+Maximum amount of food at once:10
+Milliseconds between worm segment decay:500
+Window height:768
+Window width:1600
+Worm segments:25
+Worm velocity:20
+Worm width:20

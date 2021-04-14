@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Extras
+.vscode
+CMakeCache.txt
+CMakeFiles/
+sfml
+Makefile
+cmake_install.cmake
